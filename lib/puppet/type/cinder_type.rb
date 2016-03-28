@@ -23,4 +23,16 @@ Puppet::Type.newtype(:cinder_type) do
     'cinder-api'
   end
 
+  autorequire(:keystone_endpoint) do
+    rv = []
+    endpoints = catalog.resources.find do |r|
+      r.class.to_s == 'Puppet::Type::Keystone_endpoint' && r[:ensure] == :present
+    end
+    if ! endpoints.nil?
+      rv = endpoints.flatten.map do |e|
+        e.name
+      end
+    end
+    rv
+  end
 end
